@@ -1,0 +1,67 @@
+<dashboard version="1.1" theme="dark">
+  <label>Tasks</label>
+  <description>Choose the question and click on it to provide your answer.</description>
+  <row>
+    <panel>
+      <title>Hi $env:user_realname$ this is the list of task that our team prepare for you:</title>
+      <table>
+        <search>
+          <query>| inputlookup ctf_questions 
+| join type=outer  
+[| search index=ctf_answers user=$env:user_realname$
+|stats count  latest(is_correct) as "Done" values(question_value) as question_value by question_id 
+]
+|eval Done = if(isnull(Done),"false",Done)
+|eval count = if(isnull(count),0,count)
+|rename count as "Counts of try" question_text as "Question" question_value as "Value" question_number as "Number"
+|table "Number" "Question" "Done" "Value" "Counts of try"</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <refresh>1s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">false</option>
+        <format type="number" field="#">
+          <option name="precision">0</option>
+          <option name="unit">#</option>
+          <option name="unitPosition">before</option>
+        </format>
+        <format type="color" field="#">
+          <colorPalette type="minMidMax" maxColor="#118832" minColor="#FFFFFF"></colorPalette>
+          <scale type="minMidMax"></scale>
+        </format>
+        <format type="number" field="Guestion number">
+          <option name="precision">0</option>
+          <option name="unit">№</option>
+          <option name="unitPosition">before</option>
+        </format>
+        <format type="color" field="Question cost">
+          <colorPalette type="minMidMax" maxColor="#118832" minColor="#FFFFFF"></colorPalette>
+          <scale type="minMidMax"></scale>
+        </format>
+        <format type="color" field="Done">
+          <colorPalette type="map">{"true":#118832,"false":#D94E17}</colorPalette>
+        </format>
+        <format type="number" field="Number">
+          <option name="precision">0</option>
+          <option name="unit">№</option>
+          <option name="unitPosition">before</option>
+        </format>
+        <format type="color" field="Counts of try">
+          <colorPalette type="list">[#FFFFFF,#55C169,#F3932C,#D41F1F]</colorPalette>
+          <scale type="threshold">1,2,5</scale>
+        </format>
+        <drilldown>
+          <link target="_self">/app/ctf_platform/ctf_answer?Questiom_numer=$row.Number$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</dashboard>

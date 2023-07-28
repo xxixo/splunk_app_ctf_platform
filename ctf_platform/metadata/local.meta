@@ -1,0 +1,66 @@
+[app/ui]
+version = 9.0.4.1
+modtime = 1689320666.358952000
+
+[app/launcher]
+version = 9.0.4.1
+modtime = 1689320666.361508000
+
+[nav/default]
+version = 9.0.4.1
+modtime = 1689330018.276879000
+
+[views/ctf_scoreboard]
+owner = splunk
+version = 9.0.4.1
+modtime = 1689745014.338243000
+
+[views/ctf_questions]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = splunk
+version = 9.1.0.1
+modtime = 1689757588.253599000
+
+[lookups/ctf_questions.csv]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = splunk
+version = 9.1.0.1
+modtime = 1689766428.667806000
+
+[views/ctf_answer]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = splunk
+version = 9.1.0.1
+modtime = 1689757902.230491000
+
+[indexes/ctf_answers]
+owner = splunk
+version = 9.0.4.1
+modtime = 1689582808.413771000
+
+[lookups/ctf_answer.csv]
+access = read : [ admin ], write : [ admin ]
+export = none
+owner = splunk
+version = 9.1.0.1
+modtime = 1689766404.927957000
+
+[]
+access = read : [ * ], write : [ admin, power ]
+export = none
+version = 9.0.4.1
+modtime = 1689690390.022330000
+
+[transforms/ctf_questions]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = splunk
+version = 9.0.4.1
+modtime = 1689690504.006895000
+
+[app/install/install_source_checksum]
+version = 9.1.0.1
+modtime = 1689751796.336639000

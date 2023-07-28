@@ -1,0 +1,110 @@
+<dashboard version="1.1" theme="dark">
+  <label>Answer the question</label>
+  <search>
+    <query>index=ctf_answers user=$env:user_realname$
+|append  [| inputlookup ctf_questions ]
+|eval id = "q".$Questiom_numer$
+|where question_id=id
+|stats count latest(is_correct) as slowed values(question_text) as question_text
+|eval attempt=if(count="0", "0",count), slowed=if((isnull(slowed) OR slowed="false"), null(), slowed)
+|table attempt slowed question_text
+    </query>
+    <progress>
+      <condition match="isnotnull($result.slowed$)">
+        <set token="Slowed">True</set>
+      </condition>
+    </progress>
+    <done>
+      <set token="Question">$result.question_text$</set>
+      <set token="Attempt">$result.attempt$</set>
+    </done>
+  </search>
+  <row>
+    <panel>
+      <html>
+        <div style="background-color:#000000" height="200px" width="100%">
+        <h1 align="center"> Task#$Questiom_numer$ : $Question$ </h1>
+        </div>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>index=ctf_answers user=$env:user_realname$ 
+|eval id = "q".$Questiom_numer$
+|where question_id=id
+|stats latest(is_correct) as slowed
+|eval slowed=case(slowed="true","Slowed", slowed="false", "Wrong answer", 1=1, "Not started")
+|stats latest(slowed) as slowed count
+| eval slowed = if(count="0", "Not started", slowed)</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <refresh>1s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">all</option>
+        <option name="rangeColors">["0x53a051","0xdc4e41"]</option>
+        <option name="rangeValues">[1]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row rejects="$Slowed$">
+    <panel>
+      <html>
+        <h2>Підказки:</h2>
+        <ui>
+          <li>Відповіді не чутливі до регістру.</li>
+          <li>Існує лише одна правильна відповідь.</li>
+          <li>При надсиланні своєї відповіді в разі її коректності, вас буде перенаправлено до таблиці з переліком запитань.</li>
+          <li>При надсиланні НЕ вірної відповіді, ви залишитесь на сторінці з питанням.</li>
+          <li>За неправильну відповідь бали не знімаються.</li>
+        </ui>
+      </html>
+    </panel>
+    <panel>
+      <title>Submit your answer:</title>
+      <html>
+
+      <form action="/en-US/custom/ctf_platform/ctf_controler/submit_question?" method="get">
+        <input type="hidden" id="Question_id" name="Question_id" value="q$Questiom_numer$"/>
+        <input type="hidden" id="Question" name="Question" value="$Question$"/>
+        <input type="hidden" id="Username" name="Username" value="$env:user_realname$"/>
+        <input type="hidden" id="Attempt" name="Attempt" value="$Attempt$"/>
+        <b>Answer: </b>
+        <input type="text" id="Answer" name="Answer"/> 
+        <input type="submit" value="Submit"/>
+      </form>
+      <p/>
+
+
+    </html>
+    </panel>
+    <panel>
+      <single>
+        <title>Count of try</title>
+        <search>
+          <query>index=ctf_answers user=$env:user_realname$ 
+|eval id = "q".$Questiom_numer$
+|where question_id=id
+|stats count</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <refresh>1s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0xcba700","0xd94e17","0xdc4e41"]</option>
+        <option name="rangeValues">[1,2,5]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Tryies</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+</dashboard>

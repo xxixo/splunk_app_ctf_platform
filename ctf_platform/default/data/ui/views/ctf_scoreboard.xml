@@ -1,0 +1,33 @@
+<dashboard version="1.1" theme="dark">
+  <label>Scoreboard</label>
+  <row>
+    <panel>
+      <html>
+      <div align="center">
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpUN4S2L3CrgF7kjT2xlDvDoLbQ7zfIfI2-Wrr_FdTUyQADB9yy7fouoDqqeRpj155dddv1pmwlsxWeya68bG9-TlsD7qbJb2-YtSs7Qki09Dhi3G485ASOni2OkzO7KL6HfiKSxr2o9sSCX8DDXVH0WHFQ45GJ1yux_sJlrF4GkL4-V0QDqC-R3mQFg/s646/ctf_flag_logo.gif"/>
+      </div>
+    </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Scoreboard</title>
+      <table>
+        <search>
+          <query>index="ctf_answers" is_correct=true
+|lookup ctf_questions question_id  as question_id  OUTPUTNEW question_value
+|stats sum(question_value) as score by user
+|rename user as User score as Score
+|sort -Score</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <refresh>30s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>
