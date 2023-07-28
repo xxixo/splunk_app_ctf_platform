@@ -24,6 +24,18 @@ Or you can easy install its like app from Web.
 
 <img width="2525" alt="Screenshot 2023-07-28 at 12 52 05" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/c081e5cf-c6d0-457d-8ecc-502b5174ac24">
 
+## Users permitions
+
+CTF administrator user must have `admin` permition (becouse he must have access to change in "Important objects". All other CTF players must have only user permition. With this permition thay can meke research in splunk and dont have access to answers lookup.
+
+<img width="571" alt="Screenshot 2023-07-28 at 13 23 47" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/9a4b83fe-ab02-49c2-9b0d-1d271072059f">
+
+
+<img width="2533" alt="Screenshot 2023-07-28 at 13 36 16" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/4a7a6c74-7575-461f-ba8d-57fca2144c55">
+
+
+<img width="2526" alt="Screenshot 2023-07-28 at 13 37 12" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/974d74e5-2c40-4970-a657-ad0b8d5cc3f0">
+
 
 <br>
 
@@ -72,18 +84,52 @@ After user click at one of aviable question he take the answer page.
 
 ### Answer
 
-This siple page contains question text, status (Not started - when user not try to answer, Wrong answer - if user make one or more wrong tryies, Slowed - if user make correct answer)
+`Not started` - when user not try to answer
 
 <img width="2523" alt="Screenshot 2023-07-28 at 13 00 33" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/d5b179aa-640d-4d2e-9b95-11d7bf686e2d">
 
+`Wrong answer` - if user make one or more wrong tryies
+
 <img width="2514" alt="Screenshot 2023-07-28 at 13 05 07" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/d7ffe809-9b40-4ad2-a892-d97276195d50">
 
+`Slowed - if user make correct answer`
+
+<img width="2524" alt="Screenshot 2023-07-28 at 13 14 57" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/048e916c-01a8-4453-9f01-f2b5d2e843b2">
+
+After user make correct answer he redirected to "Tasks" dashboard. And if he try go to already slowed question he dont have access to answer form.
+ 
+<img width="2528" alt="Screenshot 2023-07-28 at 13 17 36" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/760676a4-8667-4002-a49a-713be6a9ab60">
 
 
+## System structure
 
 
+<img width="546" alt="Screenshot 2023-07-28 at 14 30 36" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/5f2a3057-8c47-403c-9575-0d81607ea553">
+
+App contains one python script `/ctf_platform/appserver/controler/ctf_controler.py` - this is the answer checker script. 
+
+All users activity writes to `/ctf_platform/answers/ctf_answers.log` - for this file in `/ctf_platform/defalut/inputs.conf` exist monitor.
+
+<img width="621" alt="Screenshot 2023-07-28 at 14 35 31" src="https://github.com/xxixo/splunk_app_ctf_platform/assets/131694570/3241164f-7cd6-4f9a-b98a-50ad40963be9">
+
+Data from this file store in index `ctf_answers`. This index described in `/ctf_platform/default/indexes.conf`. All indexed files that will be created in this index will be contains at `/ctf_platform/var/lib/splunk/ctf_answer/`.
 
 
+## How to clear data and start new CTF ? 
 
+1. Clear file `/ctf_platform/answers/ctf_answers.log`
 
+```
+rm -f $SPLUNK_HOME/etc/apps/ctf_platform/answers/ctf_answers.log
+touch $SPLUNK_HOME/etc/apps/ctf_platform/answers/ctf_answers.log
+```
+2. Clear index `ctf_answers`
+```
+rm -rf $SPLUNK_HOME/etc/apps/ctf_platform/var/lib/splunk/ctf_answer
+```
+3. Make change in lookups `ctf_questions.csv`, `ctf_answers.csv`
+4. Restart splunk
+```
+$SPLUNK_HOME/bin/splunk restart
+```
 
