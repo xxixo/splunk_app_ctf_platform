@@ -8,7 +8,7 @@
         <search>
           <query>| inputlookup ctf_questions 
 | join type=outer  
-[| search index=ctf_answers user=$env:user_realname$
+[| search index=ctf_answers user="$env:user_realname$"
 |stats count  latest(is_correct) as "Done" values(question_value) as question_value by question_id 
 ]
 |eval Done = if(isnull(Done),"false",Done)
