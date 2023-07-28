@@ -1,2 +1,4 @@
-# splunk_app_ctf_platform
-Splunk app for custom CTF
+# Splunk apps for making custom CTF
+
+# How to start
+
